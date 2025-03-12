@@ -1,0 +1,35 @@
+name: f5c_index
+description: An optimised re-implementation of the call-methylation and eventalign modules in Nanopolish.
+keywords:
+  - nanopore 
+  - indexing
+  - f5c
+  - fasta
+tools:
+  - f5c:
+      description: An optimised re-implementation of the call-methylation and eventalign modules in Nanopolish.
+      homepage: https://github.com/hasindu2008/f5c
+      documentation: https://github.com/hasindu2008/f5c
+      licence: ["MIT"]
+      identifier: ""
+input:
+    - fast5_dir:
+        type: directory
+        description: directory of basecalled FAST5 files
+    - fasta_reads:
+        type: file
+        description: merged FASTA file
+output:
+  - fasta_index:
+          type: file
+          description: Indexed output automatically created by f5c
+          pattern: "*.fasta.index*"
+  - versions:
+      - versions.yml:
+          type: file
+          description: File containing software versions
+          pattern: "versions.yml"
+authors:
+  - "@hasindu2008"
+maintainers:
+  - "@hasindu2008"

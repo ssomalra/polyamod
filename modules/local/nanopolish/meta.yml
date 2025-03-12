@@ -1,0 +1,35 @@
+name: nanopolish_polya
+description: Signal-level algorithms for MinION data.
+keywords:
+  - polya
+  - signal 
+  - nanopore
+tools:
+  - nanopolish:
+        description: Signal-level algorithms for MinION data.
+        homepage: https://nanopolish.readthedocs.io/en/latest/
+        documentation: https://nanopolish.readthedocs.io/en/latest/quickstart_polya.html
+        licence: ['MIT']
+input:
+  - fasta_reads: 
+        type: file
+        description: merged FASTA file
+  - sorted_bam: 
+        type: file
+        description: sorted BAM file
+  - fasta_ref:
+        type: file
+        description: reference database in FASTA format
+output:
+  - nanopolish_polya_output:
+        type: file
+        description: TSV file containing polyA tail length estimations
+  - versions:
+      - versions.yml:
+        type: file
+        description: File containing software versions
+        pattern: "versions.yml"
+authors:
+  - "@jts"
+maintainers:
+  - "@jts"
