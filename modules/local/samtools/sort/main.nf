@@ -1,5 +1,5 @@
 process SAMTOOLS_SORT {
-	tag "$meta.id"
+	tag "samtools_sort"
 	label 'process_medium'
 
 	conda "bioconda::samtools=1.21"
@@ -16,7 +16,7 @@ process SAMTOOLS_SORT {
 
 	script:
 	"""
-	samtools sort $bam -o ${meta.id}/input_files/${params.output_name}.sorted.bam
+	samtools sort $bam -o ${meta.id}/input_files/{params.output_name}.sorted.bam
 
 	cat <<-END_VERSIONS > versions.yml
 	"${task.process}":
