@@ -36,7 +36,7 @@ workflow POLYAMOD {
     // MODULE: Run Guppy
     // 
     GUPPY_BASECALL {
-	ch_samplesheet
+	ch_samplesheet.map{sample,fast5_dir,flowcell_id,sequencing_kit,reference_genome,gtf -> tuple(sample,fast5_dir,flowcell_id,sequencing_kit)}
     }
 
     //
@@ -50,7 +50,7 @@ workflow POLYAMOD {
     // MODULE: Run f5c index
     //
     F5C_INDEX {
-	ch_samplesheet,
+	ch_samplesheet.map{sample,fast5_dir,flowcell_id,sequencing_kit,reference_genome,gtf -> tuple(sample,fast5_dir)}
 	PREP_FASTQ.out.fasta
     }
 
@@ -58,7 +58,7 @@ workflow POLYAMOD {
     // MODULE: Run minimap2 
     //
     MINIMAP_ALIGN {
-        ch_samplesheet,
+        ch_samplesheet.map{sample,fast5_dir,flowcell_id,sequencing_kit,reference_genome,gtf -> tuple(sample,reference_genome)}
 	PREP_FASTQ.out.fasta
     }
 
@@ -87,7 +87,7 @@ workflow POLYAMOD {
     // MODULE: Run nanopolish poly(A)
     // 
     NANOPOLISH_POLYA {
-        ch_samplesheet,
+        ch_samplesheet.map{sample,fast5_dir,flowcell_id,sequencing_kit,reference_genome,gtf -> tuple(sample,reference_genome,gtf)},
 	PREP_FASTQ.out.fasta,
 	SAMTOOLS_SORT.out.sorted_bam
     }
@@ -96,7 +96,7 @@ workflow POLYAMOD {
     // MODULE: Run f5c eventalign
     // 
     F5C_EVENTALIGN {
-	ch_samplesheet,
+	ch_samplesheet.map{sample,fast5_dir,flowcell_id,sequencing_kit,reference_genome,gtf -> tuple(sample,reference_genome)},
 	PREP_FASTQ.out.fasta,
 	SAMTOOLS_SORT.out.sorted_bam
     }
@@ -112,7 +112,7 @@ workflow POLYAMOD {
     // MODULE: Run m6anet inference
     //
     M6ANET_INFERENCE {
-	ch_samplesheet,
+	ch_samplesheet.map{sample,fast5_dir,flowcell_id,sequencing_kit,reference_genome,gtf -> tuple(sample,gtf)},
 	M6ANET_DATAPREP.out.dataprep
     }
 

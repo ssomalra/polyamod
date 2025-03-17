@@ -2,13 +2,12 @@ import pandas as pd
 import os
 import argparse
 
-def annotate_m6A(inference_input, gtf_input, output_dir, gtf_columns=None):
+def annotate_m6A(inference_input, gtf_input, gtf_columns=None):
     """
     Annotates m6anet m6A modification prediction results using GTF information.
     Parameters:
     - inference_input: path to m6anet inference data.site_proba.csv file
     - gtf_input: path to GTF file
-    - output_dir: directory to save the annotated output file
     - gtf_columns: list of column names for the GTF file.
     """
 
@@ -52,6 +51,7 @@ def annotate_m6A(inference_input, gtf_input, output_dir, gtf_columns=None):
     merged_df = merged_df[cols]
 
     # save the output
+    output_dir = os.path.dirname(inference_input)
     output_path = os.path.join(output_dir, "m6a_annotated.tsv")
     merged_df.to_csv(output_path, sep='\t', index=False)
     print(f"Annotated file saved to {output_path}")
@@ -60,10 +60,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Annotate m6Anet m6A modification results")
     parser.add_argument('--input', required=True, help="Path to data.site_proba.csv file from m6anet inference")
     parser.add_argument('--gtf', required=True, help="Path to GTF file")
-    parser.add_argument('--output_dir', required=True, help="Directory to save the annotated output file")
     parser.add_argument('--gtf_columns', nargs='+', default=None, help="List of column names in the GTF file (space-separated)")
 
     args = parser.parse_args()
 
     # call the function with the parsed arguments
-    annotate_m6A(args.input, args.gtf, args.output_dir, args.gtf_columns)
+    annotate_m6A(args.input, args.gtf, args.gtf_columns)

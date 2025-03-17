@@ -11,14 +11,12 @@ process F5C_EVENTALIGN {
 	tuple val(meta), path(fasta), path(sorted_bam), path(reference_genome)
 
 	output:
-	tuple val(meta), path("${meta.id}/m6A/eventalign.txt"), emit: eventalign_output
+	tuple val(meta), path("${meta.id}_eventalign.txt"), emit: eventalign_output
 	path "versions.yml", emit: versions
 
 	script:
 	"""
-	mkdir -p ${meta.id}/m6A
-
-	f5c eventalign -r $fasta -b $sorted_bam -g $reference_genome --rna --scale-events > ${meta.id}/m6A/eventalign.txt
+	f5c eventalign -r $fasta -b $sorted_bam -g $reference_genome --rna --scale-events > ${meta.id}_eventalign.txt
 
 	cat <<-END_VERSIONS > versions.yml
 	"${task.process}":

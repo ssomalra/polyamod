@@ -11,11 +11,11 @@ process M6ANET_DATAPREP {
 	tuple val(meta), path(eventalign_output)
 	
 	output:
-	tuple val(meta), path("${meta.id}/m6A/m6Anet_dataprep"), emit: dataprep
+	tuple val(meta), path("${meta.id}_m6Anet_dataprep"), emit: dataprep
 	path "versions.yml", emit: versions
 
 	script:
-	m6anet dataprep --eventalign $eventalign_output --out_dir ${meta.id}/m6A/m6Anet_dataprep --n_processes ${params.n_processes}
+	m6anet dataprep --eventalign $eventalign_output --out_dir ${meta.id}_m6Anet_dataprep --n_processes ${params.n_processes}
 
 	cat <<-END_VERSIONS > versions.yml
     "${task.process}":

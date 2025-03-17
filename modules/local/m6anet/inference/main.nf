@@ -12,18 +12,18 @@ process M6ANET_INFERENCE {
 	path(dataprep)
 	
 	output:
-	tuple val(meta), path("${meta.id}/m6A/m6Anet_inference"), emit: inference
+	tuple val(meta), path("${meta.id}_m6Anet_inference"), emit: inference
 	path "versions.yml", emit: versions
 
 	script:
 	"""
-	m6anet inference --input_dir $dataprep --out_dir ${meta.id}/m6A/m6Anet_inference --n_processes ${params.n_processes} --num_iterations ${params.num_iterations}
+	m6anet inference --input_dir $dataprep --out_dir ${meta.id}_m6Anet_inference --n_processes ${task.cpus} --num_iterations ${params.num_iterations}
 
 	// run annotation script
 	python ${projectDir}/bin/m6A_annotate.py \\
 	   --input m6Anet_inference/data.site_proba.csv \\
 	   --gtf $gtf \\
-	   --output_dir ${meta.id}/m6A
+           --gtf_columns ${params.gtf_columns.join(" ")}
 
 	cat <<-END_VERSIONS > versions.yml
     	"${task.process}":

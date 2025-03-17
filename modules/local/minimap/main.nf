@@ -12,12 +12,12 @@ process MINIMAP2_ALIGN {
 	path(fasta)
 
 	output:
-	tuple val(meta), path("${meta.id}/input_files/${params.output_name}.sam"), emit: sam
+	tuple val(meta), path("${meta.id}_${params.output_name}.sam"), emit: sam
 	path "versions.yml", emit: versions
 	
 	script:
 	"""
-    	minimap2 --secondary=no -a -x map-ont $fasta $reference_genome > ${meta.id}/input_files/${params.output_name}.sam
+    	minimap2 --secondary=no -a -x map-ont $fasta $reference_genome > ${meta.id}_${params.output_name}.sam
 
     	cat <<-END_VERSIONS > versions.yml
     	"${task.process}":

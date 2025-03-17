@@ -12,7 +12,7 @@ process F5C_INDEX {
 	path(fasta)
 
 	output:
-	tuple val(meta), path("${meta.id}/input_files/"), emit: fasta_index  // output is automatically created, so no explicity filename needed
+	tuple val(meta), path("*.index"), emit: fasta_index
 	path "versions.yml", emit: versions
 
 	script:
