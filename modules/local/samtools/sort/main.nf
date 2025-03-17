@@ -11,12 +11,12 @@ process SAMTOOLS_SORT {
 	tuple val(meta), path(bam) 
 
 	output:
-	tuple val(meta), path("${meta.id}/input_files/${params.output_name}.sorted.bam"), emit: sorted_bam 
+	tuple val(meta), path("${meta.id}_${params.output_name}.sorted.bam"), emit: sorted_bam 
 	path "versions.yml", emit: versions
 
 	script:
 	"""
-	samtools sort $bam -o ${meta.id}/input_files/{params.output_name}.sorted.bam
+	samtools sort $bam -o ${meta.id}_{params.output_name}.sorted.bam
 
 	cat <<-END_VERSIONS > versions.yml
 	"${task.process}":
