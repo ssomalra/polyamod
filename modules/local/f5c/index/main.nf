@@ -9,7 +9,7 @@ process F5C_INDEX {
 
 	input:
 	tuple val(meta), path(fast5_dir)
-	path(fasta)
+        path(fasta)
 
 	output:
 	tuple val(meta), path("*.index"), emit: fasta_index

@@ -12,7 +12,7 @@ process SAMTOOLS_FLAGSTAT_VIEW {
 
 	output:
 	tuple val(meta), path("${meta.id}_${params.output_name}.bam"), emit: bam 
-	path (${meta.id}_"alignment_summary.txt"), emit: flagstat
+	path ("${meta.id}_alignment_summary.txt"), emit: flagstat
 	path "versions.yml", emit: versions
 
 	script:

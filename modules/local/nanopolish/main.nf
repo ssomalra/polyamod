@@ -5,7 +5,7 @@ process NANOPOLISH_POLYA {
 	conda "bioconda::nanopolish=0.14.0"
 	container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
 	'https://depot.galaxyproject.org/singularity/nanopolish:0.14.0--hee927d3_5' :
-	'quay.io/biocontainers/nanopolish:0.14.0--hee927d3_5'
+	'quay.io/biocontainers/nanopolish:0.14.0--hee927d3_5' }"
 
 	input:
 	tuple val(meta), path(reference_genome), path(gtf)
@@ -33,4 +33,4 @@ process NANOPOLISH_POLYA {
                 nanopolish: \$(nanopolish --version | head -n 1)
         END_VERSIONS
         """
-} 
+}

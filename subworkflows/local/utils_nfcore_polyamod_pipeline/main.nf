@@ -8,6 +8,8 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
+import java.io.File
+
 include { UTILS_NFSCHEMA_PLUGIN     } from '../../nf-core/utils_nfschema_plugin'
 include { paramsSummaryMap          } from 'plugin/nf-schema'
 include { samplesheetToList         } from 'plugin/nf-schema'
@@ -70,18 +72,17 @@ workflow PIPELINE_INITIALISATION {
     //
     // Create channel from input file provided through params.input
     //
-
     Channel
-        .fromList(samplesheetToList(params.input, "${projectDir}/assets/schema_input.json"))
-        .map {
-            meta, fast5_dir, flowcell_id, sequencing_kit, reference_genome, gtf ->
-                return [meta, fast5_dir, flowcell_id, sequencing_kit, reference_genome, gtf]
+        Channel.fromList(samplesheetToList(params.input, "assets/schema_input.json"))
+        .map { meta, fast5_dir, flowcell_id, sequencing_kit, reference_genome, gtf ->
+	    return [meta, fast5_dir, flowcell_id, sequencing_kit, reference_genome, gtf]
         }
-        .groupTuple()
+	.view()
         .map { samplesheet ->
             validateInputSamplesheet(samplesheet)
         }
-        .set { ch_samplesheet }
+	.view()
+		.set { ch_samplesheet }
 
     emit:
     samplesheet = ch_samplesheet
@@ -136,27 +137,20 @@ workflow PIPELINE_COMPLETION {
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 //
-// Check and validate pipeline parameters
-//
-def validateInputParameters() {
-    genomeExistsError()
-}
-
-//
 // Validate channels from input samplesheet
 //
 def validateInputSamplesheet(input) {
-    def (metas, fast5_dir, flowcell_id, sequencing_kit, reference_genome, gtf) = input
-
+    def (meta, fast5_dir, flowcell_id, sequencing_kit, reference_genome, gtf) = input[0..5]
+       
     // Validate that fast5_dir exists and contains valid .fast5 files
-    def fast5Directory = new File(fast5_dir)
+    def fast5Directory = new File(fast5_dir.toString())
     if (!fast5Directory.exists() || !fast5Directory.isDirectory()) {
 	error("Please check input samplesheet -> The directory specified for FAST5 files does not exist or is not a valid directory: ${fast5_dir}")
     }
 
-    def fast5Files = fast5Directory.listFiles({ file -> file.name.endsWith('.fast5') } as FilenameFilter)
+    def fast5Files = fast5Directory.listFiles({dir, name -> name.endsWith('.fast5') } as FilenameFilter)
     if (fast5Files.length == 0) {
-	error("Please check input samplesheet -> No FAST5 files found in the directory: ${fast5_dire}")
+	error("Please check input samplesheet -> No FAST5 files found in the directory: ${fast5_dir}")
     }
 
     def emptyFiles = fast5Files.findAll {it.length() == 0}
@@ -179,5 +173,22 @@ def validateInputSamplesheet(input) {
 	error("Please check input samplesheet -> Flowcell ID and sequencing kit must be specified for basecalling.")
     }
 
-    return [metas[0], fast5_dir, flowcell_id, sequencing_kit, reference_genome, gtf]
+    return [meta, fast5_dir, flowcell_id, sequencing_kit, reference_genome, gtf]
+}
+
+def validateInputParameters() {
+    if (!params.input || params.input == '' || !file(params.input).exists()) {
+        error("Input file '${params.input}' not found. Please provide a valid samplesheet.")
+    }
+
+    if (!params.guppy_package || params.guppy_package == 'path/to/ont-guppy-cpu') {
+        error("Guppy path is not set. Update 'guppy_package' in your config file.")
+    }
+
+    def required_columns = ['chr', 'start', 'end', 'strand', 'gene_id', 'transcript_id']
+    def gtf_columns_list = params.gtf_columns.split(' ')
+
+    if (!required_columns.every { it in gtf_columns_list }) {
+        error("'gtf_columns' must contain at least: ${required_columns.join(', ')}. Provided: ${params.gtf_columns}")
+    }
 }
