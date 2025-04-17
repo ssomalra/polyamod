@@ -8,7 +8,9 @@ process F5C_EVENTALIGN {
         'quay.io/biocontainers/f5c:1.5--hee927d3_2' }"
 
 	input:
-	tuple val(meta), path(fasta), path(sorted_bam), path(reference_genome)
+	tuple val(meta), path(reference_genome)
+	path(fasta)
+	path(sorted_bam)
 
 	output:
 	tuple val(meta), path("${meta.id}_eventalign.txt"), emit: eventalign_output
